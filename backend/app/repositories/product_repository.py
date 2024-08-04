@@ -23,32 +23,24 @@ class ProductRepository:
     def get_product_by_id(self, product_id):
         with self.conn.cursor() as cur:
             cur.execute("SELECT * FROM products WHERE product_id = %s;", (product_id,))
-            data = cur.fetchone()
-
-        return data
+            return cur.fetchone()
 
     def get_products_by_category(self, category_id):
         with self.conn.cursor() as cur:
             cur.execute(
                 "SELECT * FROM products WHERE category_id = %s;", (category_id,)
             )
-            data = cur.fetchall()
-
-        return data
+            return cur.fetchall()
 
     def get_products_by_seller(self, seller_id):
         with self.conn.cursor() as cur:
             cur.execute("SELECT * FROM products WHERE seller_id = %s;", (seller_id,))
-            data = cur.fetchall()
-
-        return data
+            return cur.fetchall()
 
     def get_all_products(self):
         with self.conn.cursor() as cur:
             cur.execute("SELECT * FROM products;")
-            data = cur.fetchall()
+            return cur.fetchall()
 
-        return data
-
-    def __delete__(self):
+    def close(self):
         self.conn.close()

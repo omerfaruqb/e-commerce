@@ -24,24 +24,28 @@ class CustomerRepository:
 
     def get_customer_by_id(self, customer_id):
         with self.conn.cursor() as cur:
-            cur.execute("SELECT * FROM customers WHERE customer_id = %s;", (customer_id,))
-            data = cur.fetchone()
-
-        return data
+            cur.execute(
+                "SELECT * FROM customers WHERE customer_id = %s;", (customer_id,)
+            )
+            return cur.fetchone()
 
     def get_customer_by_email(self, email):
         with self.conn.cursor() as cur:
             cur.execute("SELECT * FROM customers WHERE email = %s;", (email,))
-            data = cur.fetchone()
-
-        return data
+            return cur.fetchone()
 
     def get_all_customers(self):
         with self.conn.cursor() as cur:
             cur.execute("SELECT * FROM customers;")
-            data = cur.fetchall()
+            return cur.fetchall()
 
-        return data
+    def get_favourite_products(self, customer_id):
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT * FROM favourite_products WHERE customer_id = %s;",
+                (customer_id,),
+            )
+            return cur.fetchall()
 
-    def __del__(self):
+    def close(self):
         self.conn.close()
