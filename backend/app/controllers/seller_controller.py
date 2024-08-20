@@ -4,18 +4,19 @@ from app.services.seller_service import SellerService
 # Define the blueprint
 seller_bp = Blueprint("seller", __name__)
 
+class SellerController:
+    def __init__(self):
+        self.seller_service = SellerService()
 
-@seller_bp.route("/add", methods=["POST"])
-def create_seller():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-    first_name = data.get("first_name")
-    last_name = data.get("last_name")
-    company_name = data.get("company_name")
+    def create_seller(self):
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        company_name = data.get("company_name")
 
-    with SellerService() as seller_service:
-        success = seller_service.create_seller(
+        success = self.seller_service.create_seller(
             first_name, last_name, email, password, company_name
         )
         if success:
@@ -23,20 +24,22 @@ def create_seller():
         else:
             return jsonify({"message": "An error occurred!"}), 500
 
-
-@seller_bp.route("/<int:seller_id>", methods=["GET"])
-def get_seller_by_id(seller_id):
-    with SellerService() as seller_service:
-        seller = seller_service.get_seller_by_id(seller_id)
+    def get_seller_by_id(self, seller_id):
+        seller = self.seller_service.get_seller_by_id(seller_id)
         if seller:
             return jsonify({"message": "Seller retrieved successfully", "data": seller})
         return jsonify({"message": "Seller not found"}), 404
 
-
-@seller_bp.route("/get_seller_by_email/<string:email>", methods=["GET"])
-def get_seller_by_email(email):
-    with SellerService() as seller_service:
-        seller = seller_service.get_seller_by_email(email)
+    def get_seller_by_email(self, email):
+        seller = self.seller_service.get_seller_by_email(email)
         if seller:
             return jsonify({"message": "Seller retrieved successfully", "data": seller})
         return jsonify({"message": "Seller not found"}), 404
+
+# Create an instance of the SellerController
+seller_controller = SellerController()
+
+# Define the routes
+seller_bp.route("/add", methods=["POST"])(seller_controller.create_seller)
+seller_bp.route("/<int:seller_id>", methods=["GET"])(seller_controller.get_seller_by_id)
+seller_bp.route("/get_seller_by_email/<string:email>", methods=["GET"])(seller_controller.get_seller_by_email)
