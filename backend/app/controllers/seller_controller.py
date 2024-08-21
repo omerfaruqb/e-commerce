@@ -17,7 +17,7 @@ class SellerController:
         company_name = data.get("company_name")
 
         success = self.seller_service.create_seller(
-            first_name, last_name, email, password, company_name
+            email, password, first_name, last_name, company_name
         )
         if success:
             return jsonify({"message": "Seller created successfully!"}), 201
